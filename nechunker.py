@@ -7,10 +7,20 @@ trie = marisa_trie.Trie()
 with open('/tmp/ruiqiang/bbword/wiki_trie.marisa', 'r') as f:
 	trie.read(f)
 
+tokentrie = marisa_trie.Trie()
+with open('/tmp/ruiqiang/bbword/qlas_token.marisa', 'r') as f:
+        tokentrie.read(f)
+
+
+def any_capitalized(word):
+    for item in word:
+        if item == item.capitalize(): return True
+    return False
 
 for line in sys.stdin:
     sent = tokenize_punct(line.strip('\r\t\n'))
-    vsent = sent.split()
+    capivsent = sent.split()
+    vsent = sent.lower().split()
     entity=[]
     for sp in range(len(vsent)):
         sent2 = ' '.join(vsent[sp:])
@@ -18,8 +28,9 @@ for line in sys.stdin:
 #        print prefix
         if len(prefix)==0: continue
         ws = prefix[-1].split()
-        if ws[-1]==vsent[sp+len(ws)-1]:
-           entity.append([' '.join(ws),sp,sp+len(ws)-1])
+        if ws[-1]==vsent[sp+len(ws)-1] and ((' '.join(ws)) not in tokentrie) and any_capitalized(capivsent[sp:sp+len(ws)]) and (' '.join(ws)).isdigit()==False:
+           entity.append([' '.join(capivsent[sp:sp+len(ws)]),sp,sp+len(ws)-1])
+    if len(entity)==0: continue
     cne,cstart,cend = entity[0]
     for i in range(1,len(entity)):
         if entity[i][2]<=cend: continue  
