@@ -4,23 +4,33 @@ from mypythonlib import tokenize_punct
 
 
 trie = marisa_trie.Trie()
-with open('/tmp/ruiqiang/bbword/wiki_trie.marisa', 'r') as f:
+with open('/tmp/ruiqiang/git_mrrqzhang/bbwords/wiki_trie_upper.marisa', 'r') as f:
 	trie.read(f)
-
+'''
 tokentrie = marisa_trie.Trie()
 with open('/tmp/ruiqiang/bbword/qlas_token.marisa', 'r') as f:
         tokentrie.read(f)
+'''
 
+stopwordtrie = marisa_trie.Trie()
+with open('/tmp/ruiqiang/git_mrrqzhang/bbwords/stopwords.marisa', 'r') as f:
+        stopwordtrie.read(f)
 
 def any_capitalized(word):
     for item in word:
         if item == item.capitalize(): return True
     return False
 
+def all_capitalized(word):
+    for item in word:
+        if item != item.capitalize(): return False
+    return True
+
+
 for line in sys.stdin:
     sent = tokenize_punct(line.strip('\r\t\n'))
-    capivsent = sent.split()
-    vsent = sent.lower().split()
+    vsent = sent.split()
+#    vsent = sent.lower().split()
     entity=[]
     for sp in range(len(vsent)):
         sent2 = ' '.join(vsent[sp:])
@@ -28,8 +38,8 @@ for line in sys.stdin:
 #        print prefix
         if len(prefix)==0: continue
         ws = prefix[-1].split()
-        if ws[-1]==vsent[sp+len(ws)-1] and ((' '.join(ws)) not in tokentrie) and any_capitalized(capivsent[sp:sp+len(ws)]) and (' '.join(ws)).isdigit()==False:
-           entity.append([' '.join(capivsent[sp:sp+len(ws)]),sp,sp+len(ws)-1])
+        if ws[-1]==vsent[sp+len(ws)-1] and (prefix[-1].lower() not in stopwordtrie) and prefix[-1].isdigit()==False and (len(ws)>=2 or (sp>0 and vsent[sp-1]!='.')) :
+           entity.append([' '.join(ws),sp,sp+len(ws)-1])
     if len(entity)==0: continue
     cne,cstart,cend = entity[0]
     for i in range(1,len(entity)):
