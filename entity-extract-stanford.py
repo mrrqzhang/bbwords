@@ -29,4 +29,7 @@ if entitylist.has_key(''):
 
 for key in sorted(entitylist.items(),key=operator.itemgetter(1),reverse=True):
 #     print key
-    sys.stdout.write('ner\t%s\t%d\n' % (key[0],key[1]))
+#    sys.stdout.write('ner\t%s\t%d\n' % (key[0],key[1]))
+    sys.stdout.write('NER:\t%s\n' % (key[0]))
+
+sys.stdout.write('\n')
