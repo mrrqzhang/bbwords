@@ -15,26 +15,44 @@ type = sys.argv[2]
 soup = BeautifulSoup(open(html_doc), 'html5lib')
 if not soup: sys.stderr.out('input file error: %s\n' % html_doc) 
 
+sys.stdout.write('URL:\t%s\n' % html_doc )
+
 if type=='title' or type=='all':
 	title = soup.find_all('title')
+	tstr=''
 	for item in title:
-#    		if item.attrs: continue # dictionary is not empty
     		outstr=''
     		for str in item.stripped_strings:
         		outstr = outstr + ' ' + str
-#        sys.stdout.write('%s ' % str.encode('utf-8'))
     		outstr = re.sub('\[.*\]','',outstr)
-    		sys.stdout.write('%s\n' % outstr.encode('utf-8'))
+                tstr = tstr+outstr+' '
+    	sys.stdout.write('TITLE:\t%s\n' % tstr.encode('utf-8'))
 
-#	sys.stdout.write('\n\n')
+if type=='time' or type=='all':
+	timetag = soup.find_all(property="article:published_time")
+        for item in timetag:
+            time = re.search('(.+)T(.+)-.*', item['content'])
+	    sys.stdout.write('DATE:\t%s\n' % time.group(1).encode('utf-8'))
+            sys.stdout.write('TIME:\t%s\n' % time.group(2).encode('utf-8'))
+
 
 if type=='all':
     tag = soup.find_all('p')
-
+    tstr=''
     for item in tag:
     	outstr=''
     	for str in item.stripped_strings:
         	outstr = outstr + ' ' + str 
 #        sys.stdout.write('%s ' % str.encode('utf-8'))
     	outstr = re.sub('\[.*\]','',outstr)
-    	sys.stdout.write('%s\n' % outstr.encode('utf-8'))
+	tstr = tstr+outstr+' '
+    sys.stdout.write('TEXT:\t%s\n' % tstr.encode('utf-8'))
+
+
+   
+
+
+
+
+
+
