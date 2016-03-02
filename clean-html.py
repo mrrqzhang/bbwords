@@ -1,4 +1,4 @@
-
+import html5lib
 from bs4 import  BeautifulSoup
 
 import sys
