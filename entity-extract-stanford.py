@@ -1,35 +1,31 @@
-
+#entity count, entity bigram count
 import sys
 import operator
+from collections import defaultdict
 
-entitylist=dict()
-for line in sys.stdin:
-    entity=''
-    words = line.strip('\r\n\t').split()
-    pre_p='O'
-    for token in words:
-      try:
-        w,p = token.split('/')
-      #  print w,p
-        if p=='O': 
-             entity=entity+'\n'
-             pre_p=p
-        elif p==pre_p:
-             entity = entity+' '+w
-             pre_p=p
-        else: 
-	     entity = entity+'\n'+w
-             pre_p=p
-      except: pass
-    for token in entity.split('\n'):
-        if entitylist.has_key(token): entitylist[token]+=1
-        else: entitylist.setdefault(token,1)
-if entitylist.has_key(''):
-    del entitylist['']
+urlid=''
+entitycount=defaultdict(int)
+bigramcount=defaultdict(int)
+data = sys.stdin.read()
 
-for key in sorted(entitylist.items(),key=operator.itemgetter(1),reverse=True):
-#     print key
-#    sys.stdout.write('ner\t%s\t%d\n' % (key[0],key[1]))
-    sys.stdout.write('NER:\t%s\n' % (key[0]))
-
-sys.stdout.write('\n')
+prep='O'
+entitylist=set()
+entity=''
+for word in data.split():
+  try:
+    w,p = word.split('/')
+    if w[0:5]=='URLID':
+        sys.stdout.write('\t%s' % '\t'.join(entitylist)) 
+        sys.stdout.write('\nURLID:\t%s' % w)
+        entitylist.clear()
+        entity=''
+    elif p=='O':
+        if entity:
+            entitylist.add(entity)
+    elif  p==prep: 
+        entity+=' '+w
+    else:
+        entity=w
+    prep=p
+  except:
+      pass

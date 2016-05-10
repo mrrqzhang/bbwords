@@ -3,6 +3,9 @@ from bs4 import  BeautifulSoup
 
 import sys
 import re
+import random
+import string
+
 
 #html_doc='japan-puts-defense-forces-alert-over-possible-n-160100804.html'
 
@@ -12,10 +15,14 @@ if  len(sys.argv) <= 2: sys.exit(0)
 html_doc = sys.argv[1]
 type = sys.argv[2]
 
-soup = BeautifulSoup(open(html_doc), 'html5lib')
-if not soup: sys.stderr.out('input file error: %s\n' % html_doc) 
+try:
+     soup = BeautifulSoup(open(html_doc), 'html5lib')
+except: 
+	sys.stderr.write('input file error: %s\n' % html_doc)
+	sys.exit(0)
 
-sys.stdout.write('URL:\t%s\n' % html_doc )
+random = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(32)])
+sys.stdout.write('URLID%s:\t%s\n' % (random,html_doc) )
 
 if type=='title' or type=='all':
 	title = soup.find_all('title')
@@ -28,12 +35,16 @@ if type=='title' or type=='all':
                 tstr = tstr+outstr+' '
     	sys.stdout.write('TITLE:\t%s\n' % tstr.encode('utf-8'))
 
-if type=='time' or type=='all':
+if type=='time' or type=='title' or type=='all':
 	timetag = soup.find_all(property="article:published_time")
+	
         for item in timetag:
             time = re.search('(.+)T(.+)-.*', item['content'])
 	    sys.stdout.write('DATE:\t%s\n' % time.group(1).encode('utf-8'))
             sys.stdout.write('TIME:\t%s\n' % time.group(2).encode('utf-8'))
+	    break  #only use one time
+        if not timetag: 
+            sys.stdout.write('DATE:\nTIME:\n')
 
 
 if type=='all':
