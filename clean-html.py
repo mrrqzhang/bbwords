@@ -33,6 +33,7 @@ if type=='title' or type=='all':
         		outstr = outstr + ' ' + str
     		outstr = re.sub('\[.*\]','',outstr)
                 tstr = tstr+outstr+' '
+                break						#only output one title if multiples
     	sys.stdout.write('TITLE:\t%s\n' % tstr.encode('utf-8'))
 
 if type=='time' or type=='title' or type=='all':
