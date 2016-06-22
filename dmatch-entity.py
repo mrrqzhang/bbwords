@@ -22,19 +22,15 @@ def all_capitalized(word):
         if item != item.capitalize(): return False
     return True
 
-wordvector = json.load(open('/tmp/ruiqiang/wikidump/wiki-test.tfidf.json'))
-dfvector = json.load(open('/tmp/ruiqiang/wikidump/wiki-test-article.tfidf.json'))
+wordvector = json.load(open('/tmp/ruiqiang/wikidump/wikiname.json'))
 
 firstkey=list(wordvector.keys())[0]
 
 for line in sys.stdin:
-    print (line)
     fields = line.strip('\r\t\n').split('\t')
     sent = fields[2]
     url = fields[1]
     normaledsent = tokenize_punct(sent.lower())
-    if url not in dfvector: continue
-    lntfidf = dfvector[url]
 
     vsent = normaledsent.split()
     entity=[]
@@ -49,7 +45,6 @@ for line in sys.stdin:
         if vlongest[-1]==vsent[sp+len(vlongest)-1] and (prefix[-1].lower() not in stopwordtrie) and prefix[-1].isdigit()==False : # and (len(vlongest)>=2 or (sp>0 and vsent[sp-1]!='.')) :
            entity.append([' '.join(vlongest),sp,sp+len(vlongest)-1])
     if len(entity)==0: continue
-    print (entity)
 
     evals=[]
     longne,lstart,lend=entity[0]
@@ -59,12 +54,8 @@ for line in sys.stdin:
         if entity[i][2]<=lend or entity[i][2]-entity[i][1]< lend-lstart: continue # skip inclusive: BC case in ABC or use lognest match  
         if entity[i][1]>lend:  # start new entity after the first
             if longne in wordvector:
-                for origword,fvec in wordvector[longne]:
-                    relscore = cosine(fvec,lntfidf)
-#                    relscore=-1.0
-                    evals.append((longne,origword,relscore))
+                evals.append(longne)
             longne,lstart,lend = entity[i]
 #    sys.stdout.write('%s\t%d\t%d\n' % (cne,cstart,cend))    
     for item in evals:
-        sys.stdout.write('ner\t%s\t%s\t%f\n' % (item[0],item[1],item[2]))
-
+        sys.stdout.write('%s\n' % item)
