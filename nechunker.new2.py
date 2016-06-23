@@ -1,7 +1,7 @@
 import marisa_trie
 import sys,math
 import json
-from mypythonlib import tokenize_punct,doc_tfidf,cosine_with_weights,cosine
+from mypythonlib import tokenize_punct,doc_tfidf,cosine_score_normalized,cosine
 
 
 trie = marisa_trie.Trie()
@@ -49,7 +49,7 @@ for line in sys.stdin:
         if vlongest[-1]==vsent[sp+len(vlongest)-1] and (prefix[-1].lower() not in stopwordtrie) and prefix[-1].isdigit()==False : # and (len(vlongest)>=2 or (sp>0 and vsent[sp-1]!='.')) :
            entity.append([' '.join(vlongest),sp,sp+len(vlongest)-1])
     if len(entity)==0: continue
-    print (entity)
+#    print (entity)
 
     evals=[]
     longne,lstart,lend=entity[0]
@@ -60,7 +60,7 @@ for line in sys.stdin:
         if entity[i][1]>lend:  # start new entity after the first
             if longne in wordvector:
                 for origword,fvec in wordvector[longne]:
-                    relscore = cosine(fvec,lntfidf)
+                    relscore = cosine_score_normalized(fvec,lntfidf)
 #                    relscore=-1.0
                     evals.append((longne,origword,relscore))
             longne,lstart,lend = entity[i]
