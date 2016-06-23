@@ -51,7 +51,7 @@ for line in sys.stdin:
     entity.append((firstkey,len(vsent),2*len(vsent)))  # to output last entity
     for i in range(1,len(entity)):
         if entity[i][0] not in wordvector: continue
-        if entity[i][2]<=lend or entity[i][2]-entity[i][1]< lend-lstart: continue # skip inclusive: BC case in ABC or use lognest match  
+        if entity[i][2]<=lend or ( entity[i][1]<lend and entity[i][2]-entity[i][1]< lend-lstart): continue # skip inclusive: BC case in ABC or use lognest match  
         if entity[i][1]>lend:  # start new entity after the first
             if longne in wordvector:
                 evals.append(longne)
