@@ -1,0 +1,4 @@
+#generate marisa wiki dictionary
+hadoop fs -cat /projects/qrw/ruiqiang/wiki/wikiname.norm.txt | $HOME/tools/Python-3.4.4/bin/python3 ../git_mrrqzhang/bbwords/write-marisa-trie2.py wiki_trie.norm.marisa
+
+
