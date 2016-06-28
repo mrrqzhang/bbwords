@@ -1,4 +1,8 @@
 #generate marisa wiki dictionary
 hadoop fs -cat /projects/qrw/ruiqiang/wiki/wikiname.norm.txt | $HOME/tools/Python-3.4.4/bin/python3 ../git_mrrqzhang/bbwords/write-marisa-trie2.py wiki_trie.norm.marisa
 
+#generate word2vec table for selected entities
+hadoop fs -cat /projects/qrw/ruiqiang/wiki/testsample/entity-word2vec/part* | gunzip | cut -f 2- | python ../git_mrrqzhang/bbwords/file-to-json.py True > wvtest.entity.json 
+cat wiki-word-tuning-set.txt | python eval-w2v-table.py wvtest.entity.json 
+
 
